@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dari Pi (داري باي) - منصة العقارات والتوكنة في تونس</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D Virtual Tour -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Pi SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        try { Pi.init({ version: "2.0", sandbox: true }); } catch(e) { console.warn('Pi SDK init:', e); }
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pi: { purple: '#4e2a84', gold: '#f0b90b', dark: '#0f0a1c', card: '#1a132f', cardBorder: 'rgba(240, 185, 11, 0.2)' },
+                        tn: { green: '#008751', red: '#E70013', gold: '#D4AF37' }
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .glass-panel { background: rgba(26, 19, 47, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(240, 185, 11, 0.2); }
+        .light .glass-panel { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0, 135, 81, 0.2); }
+        .gradient-text { background: linear-gradient(135deg, #f0b90b 0%, #008751 50%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #008751; border-radius: 4px; }
+        .logo-roof { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    </style>
+</head>
+<body class="bg-[#0b0716] light:bg-slate-100 text-slate-100 light:text-slate-900 min-h-screen flex flex-col justify-between custom-scrollbar transition-colors duration-300">
+
+    <!-- Header & Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-pi-gold/20 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-24">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="UIController.switchPage('home')">
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="relative w-28 h-12 bg-gradient-to-r from-tn-green via-pi-gold to-tn-green logo-roof flex items-center justify-center p-[2px] shadow-lg">
+                            <div class="w-full h-full bg-[#0b0716] light:bg-white logo-roof flex flex-col items-center justify-end pb-1">
+                                <span class="text-xs font-black tracking-tight text-pi-gold">Dari Pi</span>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-black text-tn-green -mt-2 drop-shadow-md">π</div>
+                        <span class="text-[11px] font-bold text-slate-300 light:text-slate-800 -mt-1 tracking-widest">داري باي</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-4 font-bold text-xs">
+                    <button onclick="UIController.switchPage('home')" class="nav-btn text-pi-gold hover:text-pi-gold p-2"><i class="fa-solid fa-house"></i> <span data-i18n="home">الرئيسية</span></button>
+                    <button onclick="UIController.switchPage('search')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="search">البحث العقاري</span></button>
+                    <button onclick="UIController.switchPage('invest')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="invest">فرص التوكنة</span></button>
+                    <button onclick="UIController.switchPage('mining')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-pickaxe"></i> <span data-i18n="mining">التعدين اليومي</span></button>
+                    <button onclick="UIController.switchPage('wallet')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-wallet"></i> <span data-i18n="wallet">المحفظة</span></button>
+                    <button onclick="UIController.switchPage('add')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-circle-plus"></i> <span data-i18n="add">إدراج عقار</span></button>
+                    <button onclick="UIController.switchPage('chat')" class="nav-btn text-slate-300 hover:text-pi-gold p-2 relative"><i class="fa-solid fa-comments"></i> <span data-i18n="chat">الرسائل</span><span class="absolute -top-1 -right-1 w-2 h-2 bg-tn-green rounded-full"></span></button>
+                    <button onclick="UIController.switchPage('profile')" class="nav-btn text-slate-300 hover:text-pi-gold p-2"><i class="fa-solid fa-user"></i> <span data-i18n="profile">ملفي الشخصي</span></button>
+                    <button onclick="UIController.switchPage('admin')" class="nav-btn text-slate-400 hover:text-pi-gold p-2"><i class="fa-solid fa-user-gear"></i> <span data-i18n="admin">الإدارة</span></button>
+                </nav>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-2">
+                    <button onclick="UIController.switchPage('settings')" class="p-2 bg-pi-card rounded-xl border border-pi-gold/20 text-pi-gold hover:border-pi-gold" title="الإعدادات">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <button onclick="UIController.toggleTheme()" class="p-2 bg-pi-card rounded-xl border border-pi-gold/20 text-pi-gold hover:border-pi-gold">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline"></i>
+                    </button>
+
+                    <select id="langSelect" onchange="I18nModule.setLanguage(this.value)" class="bg-pi-card text-xs border border-pi-gold/30 rounded-xl px-2 py-2 text-pi-gold font-bold focus:outline-none">
+                        <option value="ar">العربية 🇹🇳</option>
+                        <option value="en">English 🇬🇧</option>
+                        <option value="fr">Français 🇫🇷</option>
+                    </select>
+
+                    <div id="piAuthContainer">
+                        <button onclick="PiAuthModule.login()" class="bg-gradient-to-r from-tn-green via-pi-gold to-yellow-600 hover:brightness-110 text-slate-950 font-black px-3 py-2 rounded-xl text-xs flex items-center gap-1 shadow-lg">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span data-i18n="pi_login">دخول بـ Pi</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <main id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        
+        <!-- PAGE 1: HOME PAGE -->
+        <section id="page-home" class="page-view space-y-12">
+            <div class="relative rounded-3xl overflow-hidden p-8 md:p-12 border border-pi-gold/30 bg-gradient-to-r from-[#120a26] via-pi-card to-[#0d1d18] shadow-2xl">
+                <div class="grid lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-tn-green/20 border border-tn-green/40 text-tn-green text-xs font-bold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>منصة العقارات والتوكنة القانونية المستقبلية في تونس 🇹🇳</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-5xl font-black leading-tight">
+                            استثمر، تملّك، وتداول العقارات التونسية بـ <span class="gradient-text">Pi Network و DP Token</span>
+                        </h1>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            منصة Dari Pi توفر نظام البيع الشفاف مع حماية العربون في عقود ذكية وتدعم النقل القانوني النهائي وفق القوانين الرسمية التونسية.
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <button onclick="UIController.switchPage('search')" class="bg-pi-gold text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg hover:bg-yellow-400 transition flex items-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass"></i> استكشف العقارات الخريطة
+                            </button>
+                            <button onclick="UIController.switchPage('invest')" class="glass-panel text-tn-green font-extrabold px-6 py-3 rounded-xl hover:bg-tn-green/10 transition border border-tn-green/40 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line"></i> فرص التوكنة العقارية
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mini Mining Widget -->
+                    <div class="lg:col-span-5 glass-panel p-6 rounded-3xl border border-pi-gold/30 space-y-5">
+                        <div class="flex justify-between items-center border-b border-slate-700/60 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-pi-gold/20 flex items-center justify-center text-pi-gold text-xl font-black">
+                                    <i class="fa-solid fa-pickaxe"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">التعدين اليومي (DP Token)</h3>
+                                    <p class="text-[11px] text-slate-400">مكافأة روّاد Dari Pi اليومية</p>
+                                </div>
+                            </div>
+                            <span class="bg-tn-green/20 text-tn-green text-[10px] px-2.5 py-1 rounded-full font-extrabold border border-tn-green/40">نشط</span>
+                        </div>
+                        <div class="bg-pi-dark p-4 rounded-2xl text-center space-y-2 border border-pi-gold/10">
+                            <span class="text-xs text-slate-400">المتبقي للتعدين القادم</span>
+                            <div id="homeMiningCountdown" class="text-3xl font-black tracking-widest text-pi-gold font-mono">23:59:59</div>
+                        </div>
+                        <button onclick="UIController.switchPage('mining')" class="w-full bg-gradient-to-r from-tn-green via-pi-gold to-yellow-600 text-slate-950 font-black py-3 rounded-2xl shadow-xl flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-hammer"></i> <span>الانتقال لصفحة التعدين</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Properties Showcase -->
+            <div class="space-y-6">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-black">أحدث العقارات المضافة</h2>
+                        <p class="text-xs text-slate-400">عقارات موثقة في مختلف الولايات التونسية</p>
+                    </div>
+                    <button onclick="UIController.switchPage('search')" class="text-pi-gold text-xs font-bold hover:underline">عرض الكل <i class="fa-solid fa-arrow-left"></i></button>
+                </div>
+                <div id="homePropertyGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: ADVANCED SEARCH & MAP -->
+        <section id="page-search" class="page-view hidden space-y-8">
+            <div class="glass-panel p-6 rounded-3xl border border-pi-gold/30 space-y-4">
+                <h2 class="text-xl font-black text-pi-gold flex items-center gap-2"><i class="fa-solid fa-sliders"></i> البحث المتقدم والتصفية العقارية</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <select id="filterState" class="bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-xs text-white">
+                        <option value="all">كل الولايات التونسية</option>
+                        <option value="تونس">تونس العاصمة / المرسى</option>
+                        <option value="سوسة">سوسة / القنطاوي</option>
+                        <option value="جربة">مدنين / جربة</option>
+                    </select>
+                    <select id="filterType" class="bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-xs text-white">
+                        <option value="all">جميع الأنواع</option>
+                        <option value="token">توكنة وحصص</option>
+                        <option value="sale">بيع كامل</option>
+                    </select>
+                    <input type="number" placeholder="الحد الأقصى للسعر بـ Pi" class="bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-xs text-white">
+                    <button onclick="PropertyModule.applyFilters()" class="bg-tn-green text-white font-bold p-3 rounded-xl"><i class="fa-solid fa-filter"></i> تطبيق التصفية</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 space-y-6">
+                    <div id="searchPropertyGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                </div>
+                <div class="lg:col-span-5 glass-panel rounded-3xl p-4 border border-pi-gold/30 h-[600px] flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm font-bold text-pi-gold"><i class="fa-solid fa-map-marked-alt"></i> الخريطة التفاعلية</span>
+                        <span class="text-[10px] text-slate-400">تونس العاصمة / سوسة / جربة</span>
+                    </div>
+                    <div class="w-full h-full bg-pi-dark rounded-2xl flex items-center justify-center relative overflow-hidden border border-slate-700">
+                        <div class="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/9.5375,33.8869,6/600x600?access_token=pk.placeholder')] bg-cover opacity-60"></div>
+                        <div class="relative z-10 text-center space-y-2">
+                            <i class="fa-solid fa-map-pin text-3xl text-tn-red animate-bounce"></i>
+                            <p class="text-xs font-bold bg-pi-card/90 px-3 py-1.5 rounded-full border border-pi-gold/30">مواقع العقارات المتاحة على خريطة تونس</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: PROPERTY DETAILS PAGE -->
+        <section id="page-details" class="page-view hidden space-y-8">
+            <button onclick="UIController.switchPage('search')" class="text-pi-gold font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-arrow-right"></i> العودة للبحث</button>
+            <div id="detailsContent"></div>
+        </section>
+
+        <!-- PAGE 4: ADD PROPERTY -->
+        <section id="page-add" class="page-view hidden space-y-8">
+            <div class="max-w-3xl mx-auto glass-panel p-8 rounded-3xl border border-pi-gold/30 space-y-6">
+                <h2 class="text-2xl font-black text-pi-gold flex items-center gap-2"><i class="fa-solid fa-circle-plus"></i> إدراج عقار جديد للبيع أو التوكنة</h2>
+                <form onsubmit="PropertyModule.addNew(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="block font-bold mb-1">عنوان العقار</label>
+                        <input required type="text" id="addTitle" placeholder="مثال: شقة فاخرة بإطلالة بحرية في الحمامات" class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold mb-1">الولاية / المدينة</label>
+                            <input required type="text" id="addLocation" placeholder="مثال: نابل - الحمامات" class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">نوع العملية</label>
+                            <select id="addType" class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white">
+                                <option value="token">توكنة وتقسيم حصص (DP)</option>
+                                <option value="sale">بيع كامل العقار</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-bold mb-1">السعر بـ (Pi)</label>
+                            <input required type="number" id="addPrice" placeholder="100" class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">رابط الصورة (URL)</label>
+                            <input required type="url" id="addImage" placeholder="https://images.unsplash.com/..." class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">وصف العقار والتفاصيل القانونية</label>
+                        <textarea rows="4" placeholder="اكتب تفاصيل العقار..." class="w-full bg-pi-dark border border-pi-gold/30 rounded-xl p-3 text-white"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-tn-green to-pi-gold text-slate-950 font-black py-3.5 rounded-xl text-sm shadow-xl">إدراج العقار للمراجعة</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- PAGE 5: USER PROFILE -->
+        <section id="page-profile" class="page-view hidden space-y-8">
+            <div class="glass-panel p-8 rounded-3xl border border-pi-gold/30 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-tn-green to-pi-gold flex items-center justify-center text-3xl font-black text-slate-950 shadow-xl">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black" id="profileName">Pioneer_Tunisia</h2>
+                        <span class="bg-tn-green/20 text-tn-green text-xs font-bold px-3 py-1 rounded-full border border-tn-green/30">حساب موثق KYC 🇹🇳</span>
+                    </div>
+                </div>
+                <div class="flex gap-4 text-center">
+                    <div class="bg-pi-dark p-3 rounded-2xl border border-pi-gold/20 min-w-[100px]">
+  
