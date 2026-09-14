@@ -271,4 +271,23 @@
                 </div>
                 <div class="flex gap-4 text-center">
                     <div class="bg-pi-dark p-3 rounded-2xl border border-pi-gold/20 min-w-[100px]">
+<!-- إدراج Pi SDK -->
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<script>
+  // تهيئة Pi SDK (استخدم sandbox: true أثناء مرحلة التجربة)
+  Pi.init({ version: "2.0", sandbox: true });
+
+  // تسجيل الدخول بواسطة Pi
+  function authenticatePi() {
+    const scopes = ['username', 'payments'];
+    function onIncompletePaymentFound(payment) { /* معالجة المعاملات غير المكتملة */ }
+
+    Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
+      console.log("مرحباً بك: " + auth.user.username);
+    }).catch(function(error) {
+      console.error(error);
+    });
+  }
+</script>
   
